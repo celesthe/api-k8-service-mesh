@@ -17,6 +17,11 @@ const responseTime = new client.Histogram({
   buckets: [0.1, 0.5, 1, 1.5]
 });
 
+const errorCounter = new client.Counter({
+  name: 'http_errors_total',
+  help: 'Total de errores 5xx'
+});
+
 
 app.get('/ping', (req, res) => {
   res.json({ message: 'pong' });
@@ -38,6 +43,11 @@ app.get('/ping', (req, res) => {
   // lógica de la respuesta...
   res.json({ message: 'pong' });
   end(); // marca el tiempo
+});
+
+app.get('/error', (req, res) => {
+  errorCounter.inc();
+  res.status(500).send('Error simulado');
 });
 
 
