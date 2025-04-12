@@ -44,3 +44,17 @@ jobs:
           context: .
           push: true
           tags: csazo2408/api-k8s-demo:latest
+
+  deploy:
+            runs-on: self-hosted  #  Aquí está la clave
+            needs: build-and-push
+            steps:
+              - name: Checkout code
+                uses: actions/checkout@v3
+        
+              - name: Aplicar manifiestos en Minikube
+                run: |
+                  kubectl apply -f k8/namespace.yml
+                  kubectl apply -f k8/rbac.yml
+                  kubectl apply -f k8/deployment.yml
+                  kubectl apply -f k8/service.yml
