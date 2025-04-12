@@ -11,6 +11,12 @@ const counter = new client.Counter({
   help: 'Número total de solicitudes HTTP a /ping'
 });
 
+const responseTime = new client.Histogram({
+  name: 'http_response_duration_seconds',
+  help: 'Duración de respuestas HTTP',
+  buckets: [0.1, 0.5, 1, 1.5]
+});
+
 
 app.get('/ping', (req, res) => {
   res.json({ message: 'pong' });
@@ -26,6 +32,14 @@ app.get('/ping', (req, res) => {
   counter.inc(); // incrementa en 1
   res.json({ message: 'pong' });
 });
+
+app.get('/ping', (req, res) => {
+  const end = responseTime.startTimer();
+  // lógica de la respuesta...
+  res.json({ message: 'pong' });
+  end(); // marca el tiempo
+});
+
 
 app.listen(port, () => {
   console.log(`API corriendo en http://localhost:${port}`);
