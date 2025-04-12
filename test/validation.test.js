@@ -10,6 +10,6 @@ describe('GET /ping', () => {
   it('responde con pong', async () => {
     const res = await request(app).get('/ping');
     expect(res.statusCode).toBe(200);
-    expect(res.body.message).toBe('pong');
+    expect(res.body.message).toBe('pong fails');
   });
 });
