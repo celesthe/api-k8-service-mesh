@@ -2,6 +2,7 @@ const express = require('express');
 const app = express();
 const port = process.env.PORT || 3000;
 
+app.use(express.json());
 const client = require('prom-client');
 const collectDefaultMetrics = client.collectDefaultMetrics;
 collectDefaultMetrics();
@@ -48,6 +49,30 @@ app.get('/ping', (req, res) => {
 app.get('/error', (req, res) => {
   errorCounter.inc();
   res.status(500).send('Error simulado');
+});
+
+//add a post endpoint called Service2 that make a request to another service
+app.post('/Service', async (req, res) => {
+  try {
+    // Simula una llamada a otro servicio
+    const nameurl = req.body.name || 'World';
+    const portUrl = req.body.port || '80';
+    const response = await fetch(`http://${nameurl}:${portUrl}/HelloService`);
+    if (!response.ok) {
+      throw new Error('Error al llamar al servicio externo');
+    }
+    const data = await response.json();
+    res.json(data);
+  } catch (error) {
+    errorCounter.inc();
+    res.status(500).send('Error al llamar al servicio externo');
+  }
+});
+
+
+//add a service called HelloService 
+app.get('/HelloService', (req, res) => {
+  res.json({ message: 'Hello from HelloService!' });
 });
 
 

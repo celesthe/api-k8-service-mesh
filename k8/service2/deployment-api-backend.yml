@@ -1,0 +1,65 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata: 
+  namespace: reto5
+  name: api-service2-reto5-deployment
+  labels:
+    app: api-service2-reto5
+    version: v2
+spec:
+  replicas: 5
+  selector:
+    matchLabels:
+      app: api-service2-reto5
+      version: v2
+  template:
+    metadata:
+      labels:
+        app: api-service2-reto5
+        version: v2
+    spec:
+      containers:
+        - name: api-service2-reto5
+          image: csazo2408/service-k8:latest
+          ports:
+            - containerPort: 80
+          resources:
+            requests:
+              memory: "64Mi"
+              cpu: "100m"
+            limits:
+              memory: "128Mi"
+              cpu: "200m"
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: reto5
+  name: api-service2-reto5-deployment-v2
+  labels:
+    app: api-service2-reto5
+    version: v2
+spec:
+  replicas: 5
+  selector:
+    matchLabels:
+      app: api-service2-reto5
+      version: v2
+  template:
+    metadata:
+      labels:
+        app: api-service2-reto5
+        version: v2
+    spec:
+      containers:
+        - name: api-service2-reto5
+          image: csazo2408/service-k8:latest
+          ports:
+            - containerPort: 80
+          resources:
+            requests:
+              memory: "64Mi"
+              cpu: "100m"
+            limits:
+              memory: "128Mi"
+              cpu: "200m"

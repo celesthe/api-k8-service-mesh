@@ -54,17 +54,17 @@ jobs:
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
       - name: Build image
-        run: docker build -t csazo2408/api-k8s-demo:latest .
+        run: docker build -t csazo2408/service-k8:latest .
 
       - name: Scan Docker image with Trivy
         uses: aquasecurity/trivy-action@master
         with:
-          image-ref: csazo2408/api-k8s-demo:latest
+          image-ref: csazo2408/service-k8:latest
           exit-code: '1'
           severity: 'CRITICAL,HIGH'
 
       - name: Push image
-        run: docker push csazo2408/api-k8s-demo:latest
+        run: docker push csazo2408/service-k8:latest
 
 
   deploy:
@@ -78,7 +78,23 @@ jobs:
                 run: |
                   kubectl apply -f k8/namespace.yml
                   kubectl apply -f k8/rbac.yml
-                  kubectl apply -f k8/deployment.yml
-                  kubectl apply -f k8/service.yml
+                  kubectl apply -f k8/service1/deployment-api-backend.yml
+                  kubectl apply -f k8/service2/deployment-api-backend.yml
+                  kubectl apply -f k8/service3/deployment-api-backend.yml
+                  kubectl apply -f k8/service1/service-api-backend.yml
+                  kubectl apply -f k8/service2/service-api-backend.yml
+                  kubectl apply -f k8/service3/service-api-backend.yml
+                  kubectl apply -f k8/service1/destination-rule.yml
+                  kubectl apply -f k8/service2/destination-rule.yml
+                  kubectl apply -f k8/service3/destination-rule.yml
+                  kubectl apply -f k8/service1/virtual-service.yml
+                  kubectl apply -f k8/service2/virtual-service.yml
+                  kubectl apply -f k8/service3/virtual-service.yml
               - name: Force rollout restart
-                run: kubectl rollout restart deployment/api-demo -n demo-api
+                run: |
+                  kubectl rollout restart deployment/api-service1-reto5-deployment -n reto5
+                  kubectl rollout restart deployment/api-service1-reto5-deployment-v2 -n reto5
+                  kubectl rollout restart deployment/api-service2-reto5-deployment -n reto5
+                  kubectl rollout restart deployment/api-service2-reto5-deployment-v2 -n reto5
+                  kubectl rollout restart deployment/api-service3-reto5-deployment -n reto5
+                  kubectl rollout restart deployment/api-service3-reto5-deployment-v2 -n reto5
